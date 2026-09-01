@@ -1,0 +1,18 @@
+Port 22
+HostKey /etc/ssh/host_key
+
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+# The bind-mounted key files are owned by the host user, not by "app".
+StrictModes no
+
+AllowTcpForwarding yes
+GatewayPorts no
+PermitOpen any
+AllowAgentForwarding yes
+
+Subsystem sftp internal-sftp
+LogLevel VERBOSE

@@ -1,0 +1,37 @@
+# Local end-to-end example.
+#   ./example/gen-keys.sh
+#   docker compose up -d --build
+#   docker compose run --rm --build client   # runs example/verify.sh
+services:
+  upstream:
+    build: ./example/upstream
+    volumes:
+      - ./example/secrets/upstream_host_key:/etc/ssh/host_key:ro
+      - ./example/secrets/upstream_key.pub:/etc/ssh/authorized_keys/app:ro
+
+  relay:
+    build: .
+    env_file: ./example/.env
+    ports:
+      - "2222:2222"
+    depends_on:
+      upstream:
+        condition: service_healthy
+    # The launcher only ever writes to TMPDIR, so the image can stay read-only.
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777,size=1m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  client:
+    build: ./example/client
+    profiles: [test]
+    depends_on:
+      - relay
+    volumes:
+      - ./example/secrets:/secrets:ro
+    tmpfs:
+      - /tmp

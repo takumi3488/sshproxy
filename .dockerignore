@@ -1,0 +1,13 @@
+# Keep generated key material out of the build context.
+example/
+compose.yaml
+
+.git
+.github
+.gitignore
+.claude
+.omp
+scripts
+*.md
+renovate.json5
+LICENSE
